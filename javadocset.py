@@ -412,15 +412,17 @@ class DHIndexer(object):
             with open(nextPath, 'r') as fdIn:
                 self.soup = BeautifulSoup(fdIn.read())
                 self.soupFn = nextPath
+            self.parseEntries()
+            self.step()
 
     def parseEntries(self):
-        for anchor in self.soup.find_all("a"):  # type: Tag
+        for anchor in self.soup.find_all(u"a"):  # type: Tag
             parent = anchor.parent  # type: Tag
-            if parent.children[0] != anchor:
+            if next(parent.children) != anchor:
                 continue
             if re.match(r"^(span|code|i|b)$", str(parent.name), re.IGNORECASE):
                 parent = parent.parent  # type: Tag
-                if parent.children[0] != anchor.parent:
+                if next(parent.children) != anchor.parent:
                     continue
             if not re.match(r"dt", str(parent.name), re.IGNORECASE):
                 continue
@@ -474,6 +476,7 @@ class DHIndexer(object):
             parsedPath = parsedPath.partition("#")[0]
         add = "{}{}{}".format(name_, type_, parsedPath)
         if add not in self.added:
+            print("adding {}".format(add))
             self.added.append(add)
             self.db.execute("INSERT INTO searchIndex(name, type, path) VALUES (?, ?, ?)", (name_, type_, path_))
 
