@@ -476,7 +476,7 @@ class DHIndexer(object):
             parsedPath = parsedPath.partition("#")[0]
         add = "{}{}{}".format(name_, type_, parsedPath)
         if add not in self.added:
-            print("adding {}".format(add))
+            # print("adding {}".format(add))
             self.added.append(add)
             self.db.execute("INSERT INTO searchIndex(name, type, path) VALUES (?, ?, ?)", (name_, type_, path_))
 
